@@ -447,7 +447,9 @@ mod tests {
         std::fs::create_dir_all(&dir).unwrap();
         let scale = 1.5;
         let side = ((RIPPLE_RADIUS + 14.0) * scale * 2.0).ceil() as i32;
-        for t in [40, 120, 220, 340, 480, 640, 820] {
+        let every_frame = std::env::var_os("SHOOK_FRAMES_ALL").is_some();
+        let times: Vec<u32> = if every_frame { (0..=1000).step_by(16).collect() } else { vec![40, 120, 220, 340, 480, 640, 820] };
+        for t in times {
             let mut px = vec![0u32; (side * side) as usize];
             draw_ripple(&mut px, side, t as f32, scale, [0xC6, 0xFF, 0x3A]);
             let bytes: Vec<u8> = px.iter().flat_map(|p| p.to_le_bytes()).collect();
