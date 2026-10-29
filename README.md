@@ -14,6 +14,8 @@
 <img src="https://img.shields.io/badge/Windows-10%20%7C%2011%20(64--bit)-8B3DFF?style=flat-square&labelColor=0D0B14" alt="Windows 10 and 11">
 <img src="https://img.shields.io/badge/built%20with-Rust-C6FF3A?style=flat-square&logo=rust&logoColor=C6FF3A&labelColor=0D0B14" alt="Built with Rust">
 <img src="https://img.shields.io/badge/idle%20CPU-0%25-C6FF3A?style=flat-square&labelColor=0D0B14" alt="Idle CPU 0%">
+<img src="https://img.shields.io/badge/memory-~2%20MB-C6FF3A?style=flat-square&labelColor=0D0B14" alt="About 2 MB of memory">
+<img src="https://img.shields.io/badge/one%20exe-4.5%20MB-C6FF3A?style=flat-square&labelColor=0D0B14" alt="One 4.5 MB exe">
 <img src="https://img.shields.io/badge/license-MIT%20%C2%B7%20donationware-FF2E7E?style=flat-square&labelColor=0D0B14" alt="MIT license, donationware">
 
 </div>
@@ -33,9 +35,9 @@ Four screens, a 4K panel, a dark theme, and somewhere in there is a 32-pixel arr
 **Shook** brings it back: give the mouse a quick shake and the pointer lands right
 where you can see it, with a ripple or a spotlight so your eyes find it too.
 
-It's a tiny, carefully built Windows tool. It sleeps until the mouse moves, uses
-**zero CPU** while it waits, and gets out of the way when you're dragging, drawing
-or gaming.
+**Built light, on purpose: that's why it exists.** Shook is one 4.5 MB exe with no
+installer. It sleeps until the mouse moves: **0% CPU** while it waits and about **2 MB**
+of memory, and it gets out of the way when you're dragging, drawing or gaming.
 
 **Shook is donationware.** It's free to use, for good: no trial, no locked features,
 no account. If it saves you a hunt, a [small donation](https://acidalchamy.com/donationware/shook/?from=github#donate)
@@ -51,6 +53,7 @@ keeps the lab building more tools like it.
 
 | | |
 |---|---|
+| **Featherweight** | Plain Win32 in Rust that sleeps until the mouse moves: **zero CPU** while it waits, about **2 MB** of private memory, no polling, no timers. The UI only exists while it's on screen. |
 | **Shake to find** | A few quick side-to-side shakes and the pointer jumps into view. Slow drags, long sweeps and hand tremor never set it off. |
 | **Lands where you want** | The middle of the screen you're on, your main screen or any screen you pick, the middle of the window you're working in, a spot you pick, or right where it is. |
 | **Hard to miss** | A **ripple** or a **spotlight**, in your color and at your size, that follows the pointer while it plays. A soft two-note chime, if you like. |
@@ -58,7 +61,6 @@ keeps the lab building more tools like it.
 | **Tuned to your hand** | **Calibrate**: shake the way you always do and Shook sets its own threshold. A live meter shows every stroke and how close you are to a shake. |
 | **Stays out of the way** | Ignores shakes while a mouse button is held, while a game or video is full screen, and in any app you list. Pause it from the tray. |
 | **Hotkey, too** | Rather press a key? Set one (like <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>M</kbd>) and Shook finds the pointer without a shake. |
-| **Featherweight** | Plain Win32 in Rust. No polling, no timers, about 2 MB of private memory. The UI only exists while it's on screen. |
 
 <p align="center"><img src="docs/img/effects.png" alt="The ripple and the spotlight" width="100%"></p>
 
@@ -114,7 +116,7 @@ Left-click opens the settings.
 
 ## ✦ Light, measured
 
-Numbers from a 2013 ThinkPad (i7-4600U) running Windows 10:
+Light is the point of Shook, so here are the numbers, read from Windows' own counters on a 2013 ThinkPad (i7-4600U) running Windows 10:
 
 | | |
 |---|---|
