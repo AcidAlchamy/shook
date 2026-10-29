@@ -6,8 +6,8 @@
 1 24 "shook.manifest"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     1,0,0,0
-PRODUCTVERSION  1,0,0,0
+FILEVERSION     1,0,1,0
+PRODUCTVERSION  1,0,1,0
 FILEFLAGSMASK   0x3fL
 FILEFLAGS       0x0L
 FILEOS          VOS_NT_WINDOWS32
@@ -20,12 +20,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName",      "Acid Alchamy"
             VALUE "FileDescription",  "Shook - shake the mouse to find the pointer"
-            VALUE "FileVersion",      "1.0.0"
+            VALUE "FileVersion",      "1.0.1"
             VALUE "InternalName",     "Shook"
             VALUE "LegalCopyright",   "Copyright (c) 2026 Acid Alchamy. MIT License. Donationware."
             VALUE "OriginalFilename", "Shook.exe"
             VALUE "ProductName",      "Shook"
-            VALUE "ProductVersion",   "1.0.0"
+            VALUE "ProductVersion",   "1.0.1"
             VALUE "Comments",         "Free to use. If it helps, please donate: acidalchamy.com/donationware"
         END
     END

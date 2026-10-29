@@ -1,6 +1,6 @@
 [package]
 name = "shook"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 description = "Lost your pointer? Shake the mouse and Shook brings it to you."
 license = "MIT"

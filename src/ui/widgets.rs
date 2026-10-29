@@ -210,7 +210,11 @@ pub fn ghost(ui: &mut Ui, text: &str) -> Response {
 /// Keys drawn as keycaps: "Ctrl" "Alt" "M".
 pub fn keycaps(ui: &mut Ui, combo: &str) {
     ui.spacing_mut().item_spacing.x = 4.0;
-    for (i, key) in combo.split('+').enumerate() {
+    let mut keys: Vec<&str> = combo.split('+').collect();
+    if ui.layout().main_dir() == egui::Direction::RightToLeft {
+        keys.reverse(); // laid out from the right: still reads "Ctrl + Alt + M"
+    }
+    for (i, key) in keys.into_iter().enumerate() {
         if i > 0 {
             ui.label(RichText::new("+").color(FAINT));
         }
