@@ -4,6 +4,8 @@
 
 mod hello;
 mod settings;
+#[cfg(feature = "scale-test")]
+mod test_shot;
 mod theme;
 mod widgets;
 
@@ -22,6 +24,11 @@ use windows_sys::Win32::UI::WindowsAndMessaging::{
 };
 
 const SETTINGS_TITLE: &str = "Shook Settings";
+/// The settings window's usual inner size and the least it works at, in points.
+const SETTINGS_SIZE: egui::Vec2 = egui::vec2(620.0, 860.0);
+const SETTINGS_MIN: egui::Vec2 = egui::vec2(560.0, 520.0);
+/// What the title bar and borders add to the inner size, in points, with a little air.
+const SETTINGS_FRAME: egui::Vec2 = egui::vec2(24.0, 56.0);
 
 // DWM attributes (Windows 11; older systems ignore them).
 const DWMWA_USE_IMMERSIVE_DARK_MODE: u32 = 20;
@@ -63,6 +70,26 @@ fn set_icons(hwnd: HWND) {
     }
 }
 
+/// A new window's sizes in points. A scale-test build has no real scale, so it asks for real pixels.
+fn points(v: egui::Vec2) -> egui::Vec2 {
+    v * win::test_scale().unwrap_or(1.0)
+}
+
+/// The main screen's work area in points.
+fn work_area() -> Option<egui::Rect> {
+    let m = win::primary_monitor()?;
+    let (s, r) = (m.scale(), m.work);
+    let at = |x: i32, y: i32| egui::pos2(x as f32 / s, y as f32 / s);
+    Some(egui::Rect::from_min_max(at(r.left, r.top), at(r.right, r.bottom)))
+}
+
+/// The settings window on this work area: where it opens, its inner size and its smallest inner size, in points.
+/// It's taller than a 1080p screen at 125 %, so it gives way there (the contents scroll), and so does its minimum.
+fn settings_fit(work: egui::Rect) -> (egui::Pos2, egui::Vec2, egui::Vec2) {
+    let size = SETTINGS_SIZE.min(work.size() - SETTINGS_FRAME);
+    (work.center() - (size + SETTINGS_FRAME) / 2.0, size, SETTINGS_MIN.min(size))
+}
+
 pub fn run_settings(welcome: bool) {
     // One settings window at a time: a second request brings the first forward.
     let name = wide("Local\\Shook.Settings");
@@ -81,14 +108,18 @@ pub fn run_settings(welcome: bool) {
         return;
     }
 
+    let (position, size, min) = settings_fit(work_area().unwrap_or(egui::Rect::from_min_size(
+        egui::Pos2::ZERO,
+        SETTINGS_SIZE + SETTINGS_FRAME,
+    )));
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_title(SETTINGS_TITLE)
             .with_app_id("AcidAlchamy.Shook")
-            .with_inner_size([620.0, 860.0])
-            .with_min_inner_size([560.0, 520.0])
+            .with_position(points(position.to_vec2()).to_pos2())
+            .with_inner_size(points(size))
+            .with_min_inner_size(points(min))
             .with_icon(icon_data()),
-        centered: true,
         ..Default::default()
     };
     let result = eframe::run_native(
@@ -137,7 +168,7 @@ pub fn run_hello() {
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_title("Shook hello")
-            .with_inner_size([450.0, 196.0])
+            .with_inner_size(points(egui::vec2(450.0, 196.0)))
             .with_resizable(false)
             .with_decorations(false)
             .with_always_on_top()
@@ -173,4 +204,47 @@ fn place_bottom_right(hwnd: HWND) {
     unsafe {
         SetWindowPos(hwnd, HWND_TOPMOST, m.work.right - w - margin, m.work.bottom - h - margin, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE)
     };
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use egui::{Rect, pos2, vec2};
+
+    fn work(width: f32, height: f32, scale: f32) -> Rect {
+        Rect::from_min_size(pos2(0.0, 0.0), vec2(width / scale, (height - 40.0 * scale) / scale))
+    }
+
+    #[test]
+    fn settings_stay_inside_the_work_area() {
+        for (width, height) in [(1366.0, 768.0), (1600.0, 900.0), (1920.0, 1080.0), (2560.0, 1440.0), (3840.0, 2160.0)] {
+            for scale in [1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 3.0] {
+                let area = work(width, height, scale);
+                let (at, size, min) = settings_fit(area);
+                let outer = Rect::from_min_size(at, size + SETTINGS_FRAME);
+                assert!(area.expand(0.5).contains_rect(outer), "{width}x{height} at {scale}: {outer:?} in {area:?}");
+                assert!(min.x <= size.x && min.y <= size.y, "{width}x{height} at {scale}");
+            }
+        }
+    }
+
+    #[test]
+    fn a_big_enough_screen_gets_the_usual_size() {
+        let (_, size, min) = settings_fit(work(1920.0, 1080.0, 1.0));
+        assert_eq!((size, min), (SETTINGS_SIZE, SETTINGS_MIN));
+    }
+
+    #[test]
+    fn a_laptop_at_150_percent_keeps_the_width_and_gives_up_height() {
+        let (at, size, _) = settings_fit(work(1600.0, 900.0, 1.5));
+        assert_eq!(size.x, SETTINGS_SIZE.x);
+        assert!(size.y < 530.0 && at.y >= 0.0);
+    }
+
+    #[test]
+    fn a_taskbar_on_the_left_moves_the_window_with_the_work_area() {
+        let area = Rect::from_min_size(pos2(62.0, 0.0), vec2(1858.0, 1080.0));
+        let (at, size, _) = settings_fit(area);
+        assert!(at.x >= 62.0 && at.x + size.x <= area.right());
+    }
 }

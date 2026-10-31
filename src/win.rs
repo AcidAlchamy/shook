@@ -56,10 +56,21 @@ impl Monitor {
 
     /// Effective DPI scale (1.0 = 96 dpi).
     pub fn scale(&self) -> f32 {
+        if let Some(scale) = test_scale() {
+            return scale;
+        }
         let (mut x, mut y) = (96u32, 96u32);
         unsafe { GetDpiForMonitor(self.handle, MDT_EFFECTIVE_DPI, &mut x, &mut y) };
         x.max(96) as f32 / 96.0
     }
+}
+
+/// A scale-test build's stand-in for Windows' display scale.
+pub fn test_scale() -> Option<f32> {
+    if !cfg!(feature = "scale-test") {
+        return None;
+    }
+    std::env::var("SHOOK_TEST_SCALE").ok()?.parse().ok()
 }
 
 pub fn monitor_info(handle: HMONITOR) -> Option<Monitor> {

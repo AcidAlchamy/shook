@@ -38,6 +38,9 @@ pub fn lerp(a: Color32, b: Color32, t: f32) -> Color32 {
 
 pub fn install(ctx: &egui::Context) {
     install_fonts(ctx);
+    if let Some(scale) = crate::win::test_scale() {
+        ctx.set_zoom_factor(scale);
+    }
     ctx.set_theme(egui::Theme::Dark);
     ctx.all_styles_mut(|style| {
         use TextStyle::*;

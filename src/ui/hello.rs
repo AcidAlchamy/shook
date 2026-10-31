@@ -44,6 +44,8 @@ impl Hello {
 
 impl eframe::App for Hello {
     fn ui(&mut self, ui: &mut Ui, _frame: &mut eframe::Frame) {
+        #[cfg(feature = "scale-test")]
+        super::test_shot::frame(ui.ctx());
         let now = ui.input(|i| i.time);
         let hovered = ui.input(|i| i.pointer.has_pointer());
         self.hovered.store(hovered, Relaxed);

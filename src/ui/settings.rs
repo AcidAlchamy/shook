@@ -230,6 +230,8 @@ impl Settings {
 
 impl eframe::App for Settings {
     fn ui(&mut self, ui: &mut Ui, _frame: &mut eframe::Frame) {
+        #[cfg(feature = "scale-test")]
+        super::test_shot::frame(ui.ctx());
         let now = ui.input(|i| i.time);
         self.poll(now);
         self.read_live(now);

@@ -1,6 +1,6 @@
 [package]
 name = "shook"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2024"
 description = "Lost your pointer? Shake the mouse and Shook brings it to you."
 license = "MIT"
@@ -8,6 +8,10 @@ repository = "https://github.com/AcidAlchamy/shook"
 homepage = "https://acidalchamy.com/donationware/shook/"
 authors = ["Acid Alchamy"]
 publish = false
+
+[features]
+# Draws as if Windows' display scale were SHOOK_TEST_SCALE, to check layouts. Never in a release.
+scale-test = []
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
